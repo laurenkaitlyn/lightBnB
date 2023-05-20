@@ -102,13 +102,63 @@ LIMIT $2;
  * @return {Promise<[{}]>}  A promise to the properties.
  */
 const getAllProperties = function (options, limit = 10) {
-  const queryString = `
-  SELECT title
+
+  const queryParams = [];
+
+  let queryString = `
+  SELECT properties.*, properties.thumbnail_photo_url, properties.title, properties.number_of_bedrooms, properties.number_of_bathrooms, properties.parking_spaces, avg(property_reviews.rating) as average_rating, properties.cost_per_night
   FROM properties
-  LIMIT $1
+  JOIN property_reviews ON properties.id = property_id
   `;
+
+  if (options.city) {
+    queryParams.push(`%${options.city}`);
+    queryString += `WHERE city LIKE $${queryParams.length} `;
+  }
+  if (options.owner_id) {
+    queryParams.push(`${options.owner_id}`);
+    if (queryString.includes('WHERE')) {
+      queryString += `AND owner_id = $${queryParams.length}`;
+    } else {
+      queryString += `WHERE owner_id = $${queryParams.length}`;
+    }
+  }
+  if (options.minimum_price_per_night && options.maximum_price_per_night) {
+
+    const minPrice = Number(options.minimum_price_per_night * 100);
+    const maxPrice = Number(options.maximum_price_per_night * 100);
+
+    queryParams.push(`${minPrice}`);
+    queryParams.push(`${maxPrice}`);
+
+    if (queryString.includes('WHERE')) {
+      queryString += ` AND properties.cost_per_night >= $${queryParams.length-1} AND properties.cost_per_night <= $${queryParams.length}`;
+    } else {
+      queryString += `WHERE properties.cost_per_night >= $${queryParams.length-1} AND properties.cost_per_night <= $${queryParams.length}`;
+    }
+  }
+
+  if (options.minimum_rating) {
+    queryParams.push(`${options.minimum_rating}`);
+
+    if (queryString.includes('WHERE')) {
+      queryString += ` AND property_reviews.rating >= $${queryParams.length}`;
+    } else {
+      queryString += `WHERE property_reviews.rating >= $${queryParams.length}`;
+    }
+  }
+
+  queryParams.push(limit);
+  queryString += `
+  GROUP BY properties.id
+  ORDER BY cost_per_night
+  LIMIT $${queryParams.length};
+  `;
+
+  console.log(queryString, queryParams);
+
   return pool
-    .query(queryString, [limit])
+    .query(queryString, queryParams)
     .then(result => result.rows)
     .catch(err => err.message)
 };
