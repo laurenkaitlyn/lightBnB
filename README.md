@@ -20,6 +20,14 @@ You can add a new property for users to rent iin 'Create Listing'
 4. Start the web server using the npm run local command. The app will be served at http://localhost:3000/.
 5. Go to http://localhost:3000/ in your browser.
 
+## Using the App
+1. You can create an account for yourself with 'Sign Up', or sign into an existing account using 'Sign In'
+test account: 'Austin Beck', 'makaylahahn@ymail.com', 'password'
+2. You can search for properties for rent using the 'Search' function. Adjust the criteria for the city, price (both min and max need to be filled in), and rating (0-5)
+3. Once logged in you can now add a property to be rented wtih 'Create Listing'
+4. Listing's you own will be saved to 'My Listing', however if there is no rating on the property it will not show up
+5. You can see your reservations in 'My reservations'
+
 
 ## Project Structure
 
