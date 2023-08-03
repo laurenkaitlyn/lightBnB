@@ -28,6 +28,9 @@ test account: 'Austin Beck', 'makaylahahn@ymail.com', 'password'
 4. Listing's you own will be saved to 'My Listing', however if there is no rating on the property it will not show up
 5. You can see your reservations in 'My reservations'
 
+## ERD
+![IPbSqz9](https://github.com/laurenkaitlyn/lightBnB/assets/68622003/538f4b97-d281-46ac-9e56-93e838afeb06)
+
 
 ## Project Structure
 
